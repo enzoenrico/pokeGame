@@ -40,7 +40,7 @@ async function formatPokemon(pokemonData: any) {
 
 async function processPokemon(userInput: string) {
   const pokemonData = await getPokemon(userInput);
-  const processedPokemon = await formatPokemon(pokemonData);
+  const processedPokemon: pokeInterface = await formatPokemon(pokemonData);
   console.log(processedPokemon);
   return processedPokemon;
 }
