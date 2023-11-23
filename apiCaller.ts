@@ -1,25 +1,25 @@
 const apiUrl: string = "https://pokeapi.co/api/v2/pokemon/";
 
-interface pokeInterface {
+type poketype = {
   name: string;
   id: number;
   moves: pokeAttack[];
   fatness: number;
-}
+};
 
-interface pokeAttack {
+type pokeAttack = {
   name: string;
   url: string;
-}
+};
 
 //first async function that calls the pokeApi
 async function getPokemon(pokemonName: string) {
-  let res = await fetch(apiUrl + pokemonName);
-  let data = await res.json();
+  const res = await fetch(apiUrl + pokemonName);
+  const data = await res.json();
   return data;
 }
-//async function to format data to pokeInterface
-async function formatPokemon(pokemonData: any) {
+//async function to format data to poke type
+async function formatPokemon(pokemonData: any): Promise<poketype> {
   const name = pokemonData.forms[0].name;
   const id = pokemonData.id;
   let moves: pokeAttack[] = [];
@@ -38,11 +38,26 @@ async function formatPokemon(pokemonData: any) {
 //   })
 // });
 
-async function processPokemon(userInput: string) {
+async function processPokemon(userInput: string): Promise<poketype> {
   const pokemonData = await getPokemon(userInput);
-  const processedPokemon: pokeInterface = await formatPokemon(pokemonData);
+  const processedPokemon: poketype = await formatPokemon(pokemonData);
   console.log(processedPokemon);
   return processedPokemon;
 }
 
-processPokemon("ditto")
+async function getRandomPoke(howmany: number): Promise<Array<poketype>> {
+  let pokemonList:Array<poketype> = [];
+  for (let i = 0; i < howmany; i++) {
+    let pokeId: number = Math.floor(Math.random() * 1000);
+    console.log(`[SYSTEM]PokeID: ${pokeId}`)
+    const pokeData = await getPokemon(pokeId.toString());
+    const pokemonReturned = await formatPokemon(pokeData);
+    // console.log(pokemonReturned);
+    pokemonList.push(pokemonReturned)
+  }
+  console.table(pokemonList)
+  return pokemonList;
+}
+
+// processPokemon("ditto")
+getRandomPoke(10);
